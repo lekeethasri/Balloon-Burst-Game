@@ -1,0 +1,356 @@
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.animation.AnimationTimer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.animation.*;
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+
+import java.util.Random;
+
+public class BalloonBurstGame extends Application {
+
+    private static final int WINDOW_WIDTH = 1000;
+    private static final int WINDOW_HEIGHT = 500;
+    private static final int BALLOON_RADIUS = 20;
+
+    private Pane gamePane;
+    private Label scoreLabel;
+    private int score = 0;
+
+    private AnimationTimer gameLoop;
+    private static final Background BACKGROUND_COLOR = new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY));
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+   public void start(Stage primaryStage) {
+        primaryStage.setTitle("Balloon Burst Game");
+
+        // Game title label
+        Label gameNameLabel = new Label("🎈 BALLOON BURST GAME 🎈");
+        gameNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        gameNameLabel.setTextFill(Color.WHITE);
+        gameNameLabel.setEffect(new DropShadow());
+
+        // Let's Go button
+        Button letsGoButton = new Button("Let's Go 👉");
+        letsGoButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        letsGoButton.setStyle("-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-background-radius: 20;");
+        letsGoButton.setPrefWidth(200);
+        letsGoButton.setPrefHeight(50);
+
+        letsGoButton.setOnAction(event -> showLoginPage(primaryStage));
+
+        // Add some animation to the button (bounce effect)
+        TranslateTransition bounce = new TranslateTransition(Duration.seconds(1), letsGoButton);
+        bounce.setByY(-10);
+        bounce.setCycleCount(Animation.INDEFINITE);
+        bounce.setAutoReverse(true);
+        bounce.play();
+
+        // Layout with background gradient
+        VBox firstPageLayout = new VBox(40);
+        firstPageLayout.setAlignment(Pos.CENTER);
+        firstPageLayout.getChildren().addAll(gameNameLabel, letsGoButton);
+        firstPageLayout.setBackground(new Background(new BackgroundFill(
+                new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+                        new Stop(0, Color.CORNFLOWERBLUE),
+                        new Stop(1, Color.DEEPSKYBLUE)),
+                CornerRadii.EMPTY, Insets.EMPTY
+        )));
+
+        Scene firstPageScene = new Scene(firstPageLayout, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        primaryStage.setScene(firstPageScene);
+        primaryStage.show();
+    }
+private void showLoginPage(Stage primaryStage) {
+    // Title Label
+    Label titleLabel = new Label("🎮 Welcome to Balloon Burst 🎮");
+    titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+    titleLabel.setTextFill(Color.WHITE);
+    titleLabel.setEffect(new DropShadow());
+
+    // Username Field
+    TextField usernameField = new TextField();
+    usernameField.setPromptText("Username");
+    usernameField.setMaxWidth(300);
+    usernameField.setStyle("-fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 8;");
+
+    // Password Field
+    PasswordField passwordField = new PasswordField();
+    passwordField.setPromptText("Password");
+    passwordField.setMaxWidth(300);
+    passwordField.setStyle("-fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 8;");
+
+    // Login Button
+    Button loginButton = new Button("Login 🚀");
+    loginButton.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+    loginButton.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-background-radius: 20;");
+    loginButton.setPrefWidth(140);
+
+    loginButton.setOnAction(event -> {
+        String username = usernameField.getText();
+        String password = passwordField.getText();
+
+        if ("user".equals(username) && "pass".equals(password)) {
+            age(primaryStage);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "❌ Invalid credentials");
+            alert.showAndWait();
+        }
+    });
+
+    // Login form layout
+    VBox formLayout = new VBox(15);
+    formLayout.getChildren().addAll(titleLabel, usernameField, passwordField, loginButton);
+    formLayout.setAlignment(Pos.CENTER);
+    formLayout.setPadding(new Insets(30));
+    formLayout.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 20;");
+
+    // Root layout - full window with matching gradient
+    StackPane root = new StackPane();
+    root.setAlignment(Pos.CENTER);
+    root.getChildren().add(formLayout);
+
+    root.setBackground(new Background(new BackgroundFill(
+        new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+            new Stop(0, Color.CORNFLOWERBLUE),
+            new Stop(1, Color.DEEPSKYBLUE)),
+        CornerRadii.EMPTY, Insets.EMPTY)));
+
+    // Create a full-sized scene
+    Scene loginScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+    primaryStage.setScene(loginScene);
+}
+public void age(Stage primaryStage) {
+    primaryStage.setTitle("Age Verification");
+
+    // Title Label
+    Label titleLabel = new Label("Enter Player Details");
+    titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+    titleLabel.setTextFill(Color.WHITE);
+    titleLabel.setEffect(new DropShadow());
+
+    // Player Name
+    Label usernameLabel = new Label("Player Name:");
+    usernameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+    usernameLabel.setTextFill(Color.WHITE);
+
+    TextField usernameTextField = new TextField();
+    usernameTextField.setPromptText("Enter your name");
+    usernameTextField.setMaxWidth(300);
+    usernameTextField.setStyle("-fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 8;");
+
+    // Age Input
+    Label ageLabel = new Label("Enter your age:");
+    ageLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+    ageLabel.setTextFill(Color.WHITE);
+
+    TextField ageTextField = new TextField();
+    ageTextField.setPromptText("Age");
+    ageTextField.setMaxWidth(300);
+    ageTextField.setStyle("-fx-font-size: 14px; -fx-background-radius: 10; -fx-padding: 8;");
+
+    // Submit Button
+    Button checkButton = new Button("SUBMIT ✅");
+    checkButton.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+    checkButton.setStyle("-fx-background-color: #4caf50; -fx-text-fill: white; -fx-background-radius: 20;");
+    checkButton.setPrefWidth(140);
+
+    // Button event
+    checkButton.setOnAction(event -> {
+        String ageText = ageTextField.getText();
+        try {
+            int age = Integer.parseInt(ageText);
+            if (age < 10) {
+                primaryStage.setTitle("Sorry, can't play. Age must be 10 or older.");
+            } else {
+                begin(primaryStage);
+            }
+        } catch (NumberFormatException e) {
+            primaryStage.setTitle("Please enter a valid age as a number.");
+        }
+    });
+
+    // Form layout
+    VBox formLayout = new VBox(15);
+    formLayout.getChildren().addAll(
+        titleLabel,
+        usernameLabel, usernameTextField,
+        ageLabel, ageTextField,
+        checkButton
+    );
+    formLayout.setAlignment(Pos.CENTER);
+    formLayout.setPadding(new Insets(30));
+    formLayout.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 20;");
+
+    // Root layout with matching gradient
+    StackPane root = new StackPane();
+    root.setAlignment(Pos.CENTER);
+    root.getChildren().add(formLayout);
+    root.setBackground(new Background(new BackgroundFill(
+        new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+            new Stop(0, Color.CORNFLOWERBLUE),
+            new Stop(1, Color.DEEPSKYBLUE)),
+        CornerRadii.EMPTY, Insets.EMPTY
+    )));
+
+    Scene agePageScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+    primaryStage.setScene(agePageScene);
+}
+
+    
+    public void begin(Stage primaryStage) {
+    primaryStage.setTitle("Balloon Burst Game");
+
+    // Title Label
+    Label nameLabel = new Label("ARE YOU READY ❗❗");
+    nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+    nameLabel.setTextFill(Color.WHITE);
+    nameLabel.setEffect(new DropShadow());
+
+    // Start Button
+    Button startButton = new Button("Start 😊");
+    startButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+    startButton.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-background-radius: 20;");
+    startButton.setPrefWidth(150);
+    startButton.setOnAction(event -> showGamePage(primaryStage));
+
+    // VBox for layout
+    VBox contentLayout = new VBox(30); // spacing
+    contentLayout.setAlignment(Pos.CENTER);
+    contentLayout.getChildren().addAll(nameLabel, startButton);
+
+    // StackPane with gradient background
+    StackPane root = new StackPane(contentLayout);
+    root.setAlignment(Pos.CENTER);
+    root.setBackground(new Background(new BackgroundFill(
+        new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
+            new Stop(0, Color.CORNFLOWERBLUE),
+            new Stop(1, Color.DEEPSKYBLUE)),
+        CornerRadii.EMPTY, Insets.EMPTY
+    )));
+
+    Scene thirdPageScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+    primaryStage.setScene(thirdPageScene);
+    primaryStage.show();
+}
+
+
+   public void showGamePage(Stage primaryStage) {
+    // Game Pane Setup
+    gamePane = new Pane();
+    gamePane.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    gamePane.setBackground(new Background(new BackgroundFill(
+        new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+            new Stop(0, Color.LIGHTSKYBLUE),
+            new Stop(1, Color.SKYBLUE)),
+        CornerRadii.EMPTY, Insets.EMPTY
+    )));
+
+    // Score Label Styling
+    scoreLabel = new Label("Score: 0");
+    scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+    scoreLabel.setTextFill(Color.WHITE);
+    scoreLabel.setEffect(new DropShadow());
+    scoreLabel.setLayoutX(20);
+    scoreLabel.setLayoutY(20);
+
+    gamePane.getChildren().add(scoreLabel);
+
+    // Set scene and mouse handler
+    Scene gamePageScene = new Scene(gamePane, WINDOW_WIDTH, WINDOW_HEIGHT);
+    gamePageScene.setOnMouseClicked(event -> handleMouseClick(event.getX(), event.getY()));
+
+    primaryStage.setScene(gamePageScene);
+    primaryStage.show();
+
+    initializeGameLoop();
+}
+
+
+    private void initializeGameLoop() {
+        Random random = new Random();
+        gameLoop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                createBalloon(random);
+                moveBalloons();
+            }
+        };
+        gameLoop.start();
+    }
+
+    private void createBalloon(Random random) {
+        Circle balloon = new Circle(BALLOON_RADIUS, Color.RED);
+        balloon.setCenterX(random.nextDouble()* (WINDOW_WIDTH -2050* BALLOON_RADIUS) + (50*BALLOON_RADIUS));
+        balloon.setCenterY(WINDOW_HEIGHT - BALLOON_RADIUS);
+        gamePane.getChildren().add(balloon);
+    }
+
+    private void moveBalloons() {
+        for (int i = 0; i < gamePane.getChildren().size(); i++) {
+            if (gamePane.getChildren().get(i) instanceof Circle) {
+                Circle balloon = (Circle) gamePane.getChildren().get(i);
+                balloon.setCenterY(balloon.getCenterY()-1.0);
+                if (balloon.intersects(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT *( 3 / 4))) {
+                    gameOver();
+                    return;
+                }
+            }
+        }
+    }
+
+
+    private void handleMouseClick(double x, double y) {
+        for (int i = 0; i < gamePane.getChildren().size(); i++) {
+            if (gamePane.getChildren().get(i) instanceof Circle) {
+                Circle balloon = (Circle) gamePane.getChildren().get(i);
+                if (balloon.contains(x, y)) {
+                    gamePane.getChildren().remove(i);
+                    score += 1;
+                    scoreLabel.setText("Score: " + score);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void gameOver() {
+        gameLoop.stop();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Game Over😟!\nYour score: " + score +"  🎉");
+        alert.setOnHidden(event -> System.exit(0));
+        alert.show();
+    }
+
+    @Override
+    public void stop() {
+        if (gameLoop != null) {
+            gameLoop.stop();
+        }
+    }
+}
